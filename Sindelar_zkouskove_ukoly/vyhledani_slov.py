@@ -1,71 +1,83 @@
-# Splitting of the entered words
-def entered_words(words):
-    search_words = []
-    word = ""
+class Find_in_the_text:
 
-    for sign in words:
-        if sign != " ":
-            word += sign
-        else:
-            if word != "":
-                search_words.append(word)
-                word = ""
+    # Setting of the attributes
+    def __init__(self, file, words):
+        self.name = file
+        self.search_words = self.entered_words(words.lower())
+        self.found = {}
 
-    if word != "":
-        search_words.append(word)
+    # Splitting of the entered words
+    def entered_words(self, words):
+        search_words = []
+        word = ""
 
-    return search_words
+        for sign in words:
+            if sign != " ":
+                word += sign
+            else:
+                if word != "":
+                    search_words.append(word)
+                    word = ""
 
+        if word != "":
+            search_words.append(word)
 
-# Search for entered words in the text
-def find_words(text, search_words):
-    found = {}
-
-    for word in search_words:
-        found[word] = []
-
-    try:
-        with open(text, "r", encoding="utf-8") as file:
-            for line_number, line in enumerate(file, start=1):
-                line_lower = line.lower()
-                for word in search_words:
-                    if word in line_lower:
-                        found[word].append(line_number)
-
-    except FileNotFoundError:
-        print("Error: The specified file was not found.")
-        return None
-
-    return found
+        return search_words
 
 
-# Listing of searched words
-def list_words(found):
-    for word, lines in found.items():
-        if lines:
-            output = word + " ["
+    # Search for entered words in the text
+    def find_words(self):
 
-            i = 0
-            while i < len(lines):
-                output += str(lines[i])
-                if i < len(lines) - 1:
-                    output += ", "
-                i += 1
+        for word in self.search_words:
+            self.found[word] = []
 
-            output += "]"
-            print(output)
-        else:
-            print(word + " [-]")
+        try:
+            with open(self.name, "r", encoding="utf-8") as file:
+                for line_number, line in enumerate(file, start=1):
+                    line_lower = line.lower()
+                    for word in self.search_words:
+                        if word in line_lower:
+                            self.found[word].append(line_number)
+
+        except FileNotFoundError:
+            print("Error: The specified file was not found.")
+            return None
+
+        return self.found
 
 
-# User input 
-text = input("Enter the name of the input text: ")
-words = input("Enter the searched words (separated by spaces): ").lower()
+    # Listing of searched words
+    def list_words(self):
+        for word, lines in self.found.items():
+            if lines:
+                output = word + " ["
 
-# Finding of the entered words in the text
-search_words = entered_words(words)
-found = find_words(text, search_words)
+                i = 0
+                while i < len(lines):
+                    output += str(lines[i])
+                    if i < len(lines) - 1:
+                        output += ", "
+                    i += 1
 
-# Printing of founded words
-if found is not None:
-    list_words(found)
+                output += "]"
+                print(output)
+            else:
+                print(word + " [-]")
+
+def main():
+    # User input 
+    text = input("Enter the name of the input text: ")
+    words = input("Enter the searched words (separated by spaces): ").lower()
+
+    # Creating class object
+    search = Find_in_the_text(text, words)
+
+    # Finding of the entered words in the text
+    found = search.find_words()
+
+    # Printing of founded words
+    if found is not None:
+        search.list_words()
+
+if __name__ == "__main__":
+    main()
